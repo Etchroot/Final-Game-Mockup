@@ -7,6 +7,7 @@ import { useGame } from './GameContext';
 interface Props {
   scent: Scent;
   onClick: () => void;
+  onHover?: () => void;
   disabled?: boolean;
   side?: 'left' | 'right';
 }
@@ -14,6 +15,7 @@ interface Props {
 export default function ScentButton({
   scent,
   onClick,
+  onHover,
   disabled,
   side = 'left'
 }: Props) {
@@ -26,19 +28,21 @@ export default function ScentButton({
     <button
       type="button"
       onClick={onClick}
+      onMouseEnter={onHover}
+      onFocus={onHover}
       disabled={disabled}
       aria-pressed={isSelected}
       className={[
-        'group relative flex h-[4.75rem] w-[5.8rem] flex-col justify-between overflow-hidden rounded-[1.6rem] border-[3px] px-2 py-2 text-left transition-all duration-300',
-        'sm:h-[5.75rem] sm:w-[7.25rem] sm:px-2.5 sm:py-2.5',
-        'md:h-[6.8rem] md:w-[9.4rem] md:rounded-[1.9rem] md:px-3 md:py-3',
-        'lg:h-[7.4rem] lg:w-[13.5rem] lg:rounded-[2rem] lg:px-4 lg:py-3.5',
+        'group relative flex h-[4.2rem] w-full min-w-0 flex-col justify-between overflow-hidden rounded-[1.45rem] border-[3px] px-2 py-2 text-left transition-all duration-300',
+        'sm:h-[5.15rem] sm:px-2.5 sm:py-2.5',
+        'md:h-[6.15rem] md:rounded-[1.7rem] md:px-3 md:py-3',
+        'lg:h-[7.25rem] lg:rounded-[2rem] lg:px-4 lg:py-3.5',
         isRight ? 'items-end text-right' : 'items-start text-left',
         isSelected
           ? 'scale-[1.03] border-[#ffe39d]'
           : 'border-[#f7d3a0]/70 hover:border-[#ffe39d]',
         disabled
-          ? 'cursor-not-allowed grayscale-[0.25] opacity-70'
+          ? 'cursor-not-allowed grayscale-[0.18] opacity-70'
           : 'hover:-translate-y-1 hover:scale-[1.04] active:translate-y-[1px] active:scale-[0.98]'
       ].join(' ')}
       style={{
@@ -50,7 +54,7 @@ export default function ScentButton({
       }}
     >
       <span
-        className="pointer-events-none absolute inset-[2px] rounded-[1.45rem] opacity-90 md:rounded-[1.7rem] lg:rounded-[1.8rem]"
+        className="pointer-events-none absolute inset-[2px] rounded-[1.3rem] opacity-90 md:rounded-[1.55rem] lg:rounded-[1.8rem]"
         style={{
           background: isRight
             ? `linear-gradient(230deg, ${scent.accent}35 0%, rgba(255,255,255,0) 55%)`
@@ -60,10 +64,10 @@ export default function ScentButton({
 
       <span
         className={[
-          'relative z-10 flex h-[2.45rem] w-[2.45rem] items-center justify-center rounded-[1.15rem] border border-white/80 shadow-[inset_0_2px_10px_rgba(255,255,255,0.35)]',
-          'sm:h-[3rem] sm:w-[3rem]',
-          'md:h-[3.6rem] md:w-[3.6rem] md:rounded-[1.3rem]',
-          'lg:h-[4.25rem] lg:w-[4.25rem] lg:rounded-[1.45rem]',
+          'relative z-10 flex h-[2.2rem] w-[2.2rem] items-center justify-center rounded-[1rem] border border-white/80 shadow-[inset_0_2px_10px_rgba(255,255,255,0.35)]',
+          'sm:h-[2.85rem] sm:w-[2.85rem]',
+          'md:h-[3.45rem] md:w-[3.45rem] md:rounded-[1.2rem]',
+          'lg:h-[4.1rem] lg:w-[4.1rem] lg:rounded-[1.45rem]',
           isRight ? 'self-end' : 'self-start'
         ].join(' ')}
         style={{
@@ -73,7 +77,7 @@ export default function ScentButton({
             : `0 10px 18px ${scent.accent}45`
         }}
       >
-        <div className="relative h-[1.75rem] w-[1.75rem] sm:h-[2.2rem] sm:w-[2.2rem] md:h-[2.75rem] md:w-[2.75rem] lg:h-[3.2rem] lg:w-[3.2rem]">
+        <div className="relative h-[1.6rem] w-[1.6rem] sm:h-[2.05rem] sm:w-[2.05rem] md:h-[2.55rem] md:w-[2.55rem] lg:h-[3.1rem] lg:w-[3.1rem]">
           <Image
             src={scent.icon}
             alt={scent.name}
@@ -87,14 +91,14 @@ export default function ScentButton({
         </div>
       </span>
 
-      <span className="relative z-10 mt-auto w-full rounded-[1.1rem] border border-[#f7d7a7]/80 bg-[#fff5e4]/75 px-1.5 py-1 shadow-[inset_0_1px_4px_rgba(255,255,255,0.45)] sm:px-2 md:rounded-[1.2rem] lg:px-2.5">
-        <span className="block text-[0.46rem] uppercase tracking-[0.24em] text-[#8f6549] sm:text-[0.5rem] md:text-[0.56rem]">
+      <span className="relative z-10 mt-auto w-full rounded-[1rem] border border-[#f7d7a7]/80 bg-[#fff5e4]/75 px-1.5 py-1 shadow-[inset_0_1px_4px_rgba(255,255,255,0.45)] sm:px-2 md:rounded-[1.15rem] lg:px-2.5">
+        <span className="block text-[0.42rem] uppercase tracking-[0.24em] text-[#8f6549] sm:text-[0.48rem] md:text-[0.54rem]">
           essence
         </span>
-        <span className="block text-[0.65rem] font-bold text-[#4d2a21] sm:text-[0.76rem] md:text-[0.88rem] lg:text-[0.95rem]">
+        <span className="block text-[0.6rem] font-bold text-[#4d2a21] sm:text-[0.72rem] md:text-[0.84rem] lg:text-[0.95rem]">
           {scent.name}
         </span>
-        <span className="hidden text-[0.55rem] text-[#7a5642] md:block lg:text-[0.66rem]">
+        <span className="hidden text-[0.5rem] text-[#7a5642] md:block lg:text-[0.66rem]">
           {scent.note}
         </span>
       </span>

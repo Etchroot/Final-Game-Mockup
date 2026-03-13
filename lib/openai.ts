@@ -1,31 +1,67 @@
-import OpenAI from 'openai';
+import { formatRecipeForPrompt, generateDescription, RecipeNote } from './recipeUtils';
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-  baseURL: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
-});
+const SYSTEM_PROMPT =
+  '너는 향수 공방에서 향수를 설명하는 감성적인 카피라이터다.';
 
-export async function generatePerfumeDescription(sentence: string, recipe: Record<string, number>) {
+export async function generatePerfumeDescription(
+  sentence: string,
+  recipe: RecipeNote[]
+) {
+  const fallback = generateDescription(sentence, recipe);
+
   if (!process.env.OPENAI_API_KEY) {
-    // mock response
-    return {
-      name: 'Mock 향수',
-      keywords: ['감성', '몽환', '달콤'],
-      description: '이 향수는 문장과 어울리는 부드러운 향으로 구성되었습니다.',
-      marketing: '당신만의 향을 경험해보세요!'
-    };
+    return { description: fallback };
   }
 
-  const prompt = `너는 귀엽고 장난스러운 분위기의 향수 공방 게임에서 향수를 설명하는 카피라이터다.\n
-사용자가 '${sentence}' 문장에 맞춰 아래 레시피로 향수를 만들었다.\n${JSON.stringify(recipe)}\n\n이 향수의 이름, 분위기 키워드 3개, 감성적인 설명 2문장, 마케팅용 한 줄 소개를 작성해라.`;
+  const prompt = `사용자가 아래 문장에 맞춰 향수를 만들었다.
 
-  const response = await client.chat.completions.create({
-    model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0.8,
-  });
+문장:
+${sentence}
 
-  // parse response text--here we just return raw text for prototype
-  // TODO: 실제 구조화된 객체로 변환하고 UI에 반영
-  return { raw: response.choices[0].message.content || '' };
+향 레시피:
+${formatRecipeForPrompt(recipe)}
+
+이 향들이 섞였을 때 느껴질 수 있는 분위기와 감정을 상상하여
+아름다운 시적인 문장으로 설명해라.
+
+조건
+- 한국어
+- 줄바꿈 포함
+- 너무 길지 않게
+- 감정적인 표현 사용`;
+
+  try {
+    const response = await fetch(
+      `${process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1'}/chat/completions`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+          temperature: 0.95,
+          messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: prompt }
+          ]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('OpenAI request failed');
+    }
+
+    const data = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+
+    return {
+      description: data.choices?.[0]?.message?.content?.trim() || fallback
+    };
+  } catch {
+    return { description: fallback };
+  }
 }

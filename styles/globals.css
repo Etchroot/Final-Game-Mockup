@@ -100,6 +100,16 @@ button:focus-visible {
   }
 }
 
+@keyframes brew-progress {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
 .cauldron-float {
   animation: cauldron-float 4.8s ease-in-out infinite;
 }
@@ -119,4 +129,9 @@ button:focus-visible {
 
 .lantern-pulse {
   animation: lantern-pulse 3s ease-in-out infinite;
+}
+
+.brew-progress {
+  background-size: 200% 100%;
+  animation: brew-progress 2.8s linear infinite;
 }

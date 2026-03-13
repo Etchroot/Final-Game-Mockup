@@ -1,8 +1,11 @@
 import scents from '../data/scents';
 
-export function calculateRecipe(
-  counts: Record<string, number>
-): { key: string; percent: number }[] {
+export interface RecipeNote {
+  key: string;
+  percent: number;
+}
+
+export function calculateRecipe(counts: Record<string, number>): RecipeNote[] {
   const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
 
   if (total === 0) {
@@ -17,10 +20,7 @@ export function calculateRecipe(
     .sort((left, right) => right.percent - left.percent);
 }
 
-export function generateName(
-  sentence: string,
-  recipe: { key: string; percent: number }[]
-): string {
+export function generateName(sentence: string, recipe: RecipeNote[]): string {
   if (recipe.length === 0) {
     return '이름 없는 향수';
   }
@@ -31,20 +31,26 @@ export function generateName(
   return `${firstWord}의 ${leadScent}`;
 }
 
-export function generateDescription(
-  sentence: string,
-  recipe: { key: string; percent: number }[]
-): string {
+export function formatRecipeForPrompt(recipe: RecipeNote[]): string {
+  return recipe
+    .map((entry) => {
+      const scentName = scents.find((scent) => scent.key === entry.key)?.name ?? entry.key;
+      return `- ${scentName}: ${entry.percent}%`;
+    })
+    .join('\n');
+}
+
+export function generateDescription(sentence: string, recipe: RecipeNote[]): string {
   if (recipe.length === 0) {
     return '아직 향료가 선택되지 않았어요.';
   }
 
-  const mainNotes = recipe
+  const noteNames = recipe
     .slice(0, 2)
     .map((entry) => scents.find((scent) => scent.key === entry.key)?.name)
     .filter((name): name is string => Boolean(name));
 
-  return `${sentence}를 떠올리며 조합한 향수예요. ${
-    mainNotes.length > 0 ? `${mainNotes.join('과 ')} 중심의 노트가` : '선택한 향료가'
-  } 공방의 포근한 잔향처럼 천천히 퍼집니다.`;
+  const [firstNote = '은은한 향', secondNote = '잔향'] = noteNames;
+
+  return `${sentence}\n\n${firstNote}의 결이 먼저 번지고\n${secondNote}가 조용히 겹쳐지며\n작은 공방 안에 포근한 여운을 남깁니다.`;
 }
