@@ -1,4 +1,4 @@
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -19,13 +19,13 @@ export async function generatePerfumeDescription(sentence: string, recipe: Recor
   const prompt = `너는 귀엽고 장난스러운 분위기의 향수 공방 게임에서 향수를 설명하는 카피라이터다.\n
 사용자가 '${sentence}' 문장에 맞춰 아래 레시피로 향수를 만들었다.\n${JSON.stringify(recipe)}\n\n이 향수의 이름, 분위기 키워드 3개, 감성적인 설명 2문장, 마케팅용 한 줄 소개를 작성해라.`;
 
-  const response = await client.responses.create({
+  const response = await client.chat.completions.create({
     model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-    input: prompt,
-    temperature: 0.8
+    messages: [{ role: 'user', content: prompt }],
+    temperature: 0.8,
   });
 
   // parse response text--here we just return raw text for prototype
   // TODO: 실제 구조화된 객체로 변환하고 UI에 반영
-  return { raw: response.output[0].content[0].text };
+  return { raw: response.choices[0].message.content || '' };
 }
