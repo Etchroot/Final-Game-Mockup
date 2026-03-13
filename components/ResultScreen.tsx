@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useGame } from './GameContext';
-import { calculateRecipe, generateName, generateDescription } from '../lib/recipeUtils';
+import {
+  calculateRecipe,
+  generateDescription,
+  generateName
+} from '../lib/recipeUtils';
 import scents from '../data/scents';
 
 export default function ResultScreen() {
@@ -12,16 +16,15 @@ export default function ResultScreen() {
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    const r = calculateRecipe(counts);
-    setRecipe(r);
-    setName(generateName(sentence, r));
-    setDescription(generateDescription(sentence, r));
+    const nextRecipe = calculateRecipe(counts);
+    setRecipe(nextRecipe);
+    setName(generateName(sentence, nextRecipe));
+    setDescription(generateDescription(sentence, nextRecipe));
   }, [counts, sentence]);
 
   const handleCopyLink = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    alert('링크가 복사되었습니다!');
+    navigator.clipboard.writeText(window.location.href);
+    alert('결과 페이지 링크를 복사했어요.');
   };
 
   const handleRestart = () => {
@@ -30,44 +33,51 @@ export default function ResultScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-pink-50 flex flex-col items-center justify-center p-8">
-      <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full text-center">
-        <h2 className="text-3xl font-bold mb-4 text-purple-800">{name}</h2>
-        {/* Perfume bottle image placeholder */}
-        <div className="w-32 h-48 mx-auto bg-gradient-to-b from-purple-400 to-purple-600 rounded-lg mb-6 flex items-center justify-center shadow-lg">
-          <span className="text-white text-2xl">🧴</span>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#fff0d0] via-[#fbe7fb] to-[#d8e9ff] p-8">
+      <div className="w-full max-w-md rounded-[2rem] bg-white/92 p-8 text-center shadow-2xl backdrop-blur-sm">
+        <h2 className="mb-4 text-3xl font-black text-[#6f3c8f]">{name}</h2>
+
+        <div className="mx-auto mb-6 flex h-48 w-32 items-center justify-center rounded-[1.75rem] bg-gradient-to-b from-[#c688ff] to-[#7b4dd0] shadow-lg">
+          <span className="text-4xl text-white">향수</span>
         </div>
+
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">레시피</h3>
-          <div className="space-y-1">
-            {recipe.map(r => (
-              <div key={r.key} className="flex justify-between">
-                <span>{scents.find(s => s.key === r.key)?.name}:</span>
-                <span>{r.percent}%</span>
+          <h3 className="mb-2 text-lg font-bold text-[#5b355d]">배합 비율</h3>
+          <div className="space-y-1.5">
+            {recipe.map((entry) => (
+              <div
+                key={entry.key}
+                className="flex justify-between rounded-full bg-[#f8f1ff] px-4 py-2 text-sm text-[#4f3758]"
+              >
+                <span>{scents.find((scent) => scent.key === entry.key)?.name}</span>
+                <span>{entry.percent}%</span>
               </div>
             ))}
           </div>
         </div>
-        <p className="italic text-gray-700 mb-6">{description}</p>
+
+        <p className="mb-6 italic leading-relaxed text-[#6a5a73]">{description}</p>
+
         <div className="flex justify-center gap-4">
           <button
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition shadow"
+            className="rounded-full bg-[#5e8df8] px-6 py-3 text-white shadow transition hover:bg-[#4a7be8]"
             onClick={handleCopyLink}
           >
-            링크 복사
+            결과 링크 복사
           </button>
           <button
-            className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition shadow"
+            className="rounded-full bg-[#5ebf8b] px-6 py-3 text-white shadow transition hover:bg-[#49a979]"
             onClick={() => window.open('https://example.com/buy', '_blank')}
           >
-            구매하기
+            구매 페이지
           </button>
         </div>
+
         <button
-          className="mt-4 text-sm text-blue-600 underline"
+          className="mt-4 text-sm font-bold text-[#5a63d8] underline"
           onClick={handleRestart}
         >
-          다시 만들기
+          다시 제조하기
         </button>
       </div>
     </div>

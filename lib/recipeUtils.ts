@@ -1,36 +1,50 @@
-import { Scent } from '../data/scents';
+import scents from '../data/scents';
 
-export function calculateRecipe(counts: Record<string, number>): { key: string; percent: number }[] {
-  const total = Object.values(counts).reduce((a, b) => a + b, 0);
-  const arr = Object.entries(counts).map(([key, count]) => ({ key, percent: Math.round((count / total) * 100) }));
-  return arr;
+export function calculateRecipe(
+  counts: Record<string, number>
+): { key: string; percent: number }[] {
+  const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+  if (total === 0) {
+    return [];
+  }
+
+  return Object.entries(counts)
+    .map(([key, count]) => ({
+      key,
+      percent: Math.round((count / total) * 100)
+    }))
+    .sort((left, right) => right.percent - left.percent);
 }
 
-export function generateName(sentence: string, recipe: { key: string; percent: number }[]): string {
-  if (recipe.length === 0) return '무명의 향수';
-  const top = recipe.sort((a, b) => b.percent - a.percent)[0];
-  const mapping: Record<string, string> = {
-    lavender: 'Lavender',
-    lemon: 'Lemon',
-    vanilla: 'Vanilla',
-    pine: 'Forest',
-    rose: 'Rose',
-    orange: 'Orange',
-    sandalwood: 'Sandal',
-    musk: 'Mystic',
-    cotton: 'Cotton',
-    petrichor: 'Rain'
-  };
-  const base = mapping[top.key] || top.key;
-  // simple name; could incorporate sentence keywords
-  return `${base} ${sentence.split(' ')[0]}`;
+export function generateName(
+  sentence: string,
+  recipe: { key: string; percent: number }[]
+): string {
+  if (recipe.length === 0) {
+    return '이름 없는 향수';
+  }
+
+  const leadScent = scents.find((scent) => scent.key === recipe[0].key)?.name ?? '비밀';
+  const firstWord = sentence.split(' ')[0] ?? '공방';
+
+  return `${firstWord}의 ${leadScent}`;
 }
 
-export function generateDescription(sentence: string, recipe: { key: string; percent: number }[]): string {
-  if (recipe.length === 0) return '';
-  const keys = recipe
-    .sort((a, b) => b.percent - a.percent)
-    .map(r => r.key)
-    .slice(0, 2);
-  return `이 향수는 ${keys.join('과')}의 조화로 이루어져 있으며, ${sentence}의 분위기를 담고 있습니다.`;
+export function generateDescription(
+  sentence: string,
+  recipe: { key: string; percent: number }[]
+): string {
+  if (recipe.length === 0) {
+    return '아직 향료가 선택되지 않았어요.';
+  }
+
+  const mainNotes = recipe
+    .slice(0, 2)
+    .map((entry) => scents.find((scent) => scent.key === entry.key)?.name)
+    .filter((name): name is string => Boolean(name));
+
+  return `${sentence}를 떠올리며 조합한 향수예요. ${
+    mainNotes.length > 0 ? `${mainNotes.join('과 ')} 중심의 노트가` : '선택한 향료가'
+  } 공방의 포근한 잔향처럼 천천히 퍼집니다.`;
 }

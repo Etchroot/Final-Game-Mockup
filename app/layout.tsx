@@ -3,14 +3,14 @@ import { ReactNode } from 'react';
 import { GameProvider } from '../components/GameContext';
 
 export const metadata = {
-  title: '마녀의 향수 공방',
-  description: '문장으로 향을 빚는 웹 미니게임'
+  title: '마녀 공방 향수 제조실',
+  description: '문장에 어울리는 향료를 골라 나만의 향수를 만드는 게임'
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
-      <body className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-100 to-pink-50">
+      <body className="min-h-screen overflow-x-hidden bg-[#120b16] text-[#fff5de]">
         <GameProvider>{children}</GameProvider>
       </body>
     </html>

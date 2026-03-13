@@ -2,13 +2,121 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  padding: 0;
-  margin: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background: #faf5ff; /* light purple for witch lab feel */
+:root {
+  --ink-night: #120b16;
+  --paper-warm: #fff4df;
+  --gold-soft: #f0d4a2;
 }
 
-button:focus {
-  outline: none;
+html,
+body {
+  min-height: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: 'Trebuchet MS', 'Gill Sans', 'Malgun Gothic', sans-serif;
+  background: var(--ink-night);
+  color: #fff5de;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button:focus-visible {
+  outline: 3px solid #ffe39d;
+  outline-offset: 2px;
+}
+
+@keyframes cauldron-float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) scale(0.82);
+    opacity: 0.3;
+  }
+
+  20% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translateY(-34px) scale(1.12);
+    opacity: 0;
+  }
+}
+
+@keyframes steam-drift {
+  0% {
+    transform: translateY(18px) scaleX(0.82);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 0.45;
+  }
+
+  100% {
+    transform: translateY(-20px) translateX(10px) scaleX(1.08);
+    opacity: 0;
+  }
+}
+
+@keyframes ember-flicker {
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0);
+    opacity: 0.92;
+  }
+
+  50% {
+    transform: scaleY(1.12) translateY(-3px);
+    opacity: 1;
+  }
+}
+
+@keyframes lantern-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.95;
+    transform: scale(1.03);
+  }
+}
+
+.cauldron-float {
+  animation: cauldron-float 4.8s ease-in-out infinite;
+}
+
+.magic-bubble {
+  animation: bubble-rise 5s ease-in-out infinite;
+}
+
+.magic-steam {
+  animation: steam-drift 4.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.ember-glow {
+  animation: ember-flicker 2.2s ease-in-out infinite;
+}
+
+.lantern-pulse {
+  animation: lantern-pulse 3s ease-in-out infinite;
 }
