@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import sentences from '../data/sentences';
-import scents from '../data/scents';
+import scents, { Scent } from '../data/scents';
 import ScentButton from './ScentButton';
 import { useRouter } from 'next/navigation';
 import { useGame } from './GameContext';
@@ -72,7 +72,7 @@ export default function ManufactureScreen() {
       {/* Scent buttons on sides */}
       <div className="absolute inset-0 flex justify-between items-center px-8 pointer-events-none">
         <div className="grid grid-cols-1 gap-4 pointer-events-auto">
-          {scents.slice(0, 5).map(s => (
+          {scents.slice(0, 5).map((s: Scent) => (
             <ScentButton
               key={s.key}
               scent={s}
@@ -82,7 +82,7 @@ export default function ManufactureScreen() {
           ))}
         </div>
         <div className="grid grid-cols-1 gap-4 pointer-events-auto">
-          {scents.slice(5).map(s => (
+          {scents.slice(5).map((s: Scent) => (
             <ScentButton
               key={s.key}
               scent={s}
